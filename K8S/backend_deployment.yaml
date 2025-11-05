@@ -3,44 +3,40 @@ kind: Deployment
 metadata:
   name: backend-deployment
   namespace: webapp
-  labels:
-    app: backend-deployment
 spec:
   selector:
     matchLabels:
       app: backend
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
         app: backend
     spec:
-      volumes:
-      - name: db-password
-        secret:
-          secretName: db-secret
-      - name: pre-install
-        emptyDir: {}
-      initContainers:
-      - name: pre-install
-        image: busybox
-        command: ['sh', '-c', 'cat /db-secret/db-password >> /run/secrets/db-password']
-        volumeMounts:
-        - name: db-password
-          mountPath: "/db-secret"
-        - name: pre-install
-          mountPath: "/run/secrets"
       containers:
       - name: backend
-        image: 3booda24/app-go:latest
-        imagePullPolicy: Never
+        image: 3booda24/golang-openshift:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8000
+        env:
+        - name: DB_HOST
+          value: db
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_USER
+          value: root
+        - name: DB_PASSWORD_FILE
+          value: /app/db-password
         volumeMounts:
-        - name: pre-install
-          mountPath: "/run/secrets"
-        - name: db-password
-          mountPath: "/db-secret"
-
-
+        - name: db-secret
+          mountPath: /app
+          readOnly: true
+      volumes:
+      - name: db-secret
+        secret:
+          secretName: db-secret
+          items:
+          - key: db-password
+            path: db-password
 

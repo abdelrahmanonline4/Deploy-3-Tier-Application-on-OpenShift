@@ -16,7 +16,7 @@ import (
 )
 
 func connect() (*sql.DB, error) {
-	bin, err := ioutil.ReadFile("/run/secrets/db-password")
+	bin, err := ioutil.ReadFile(os.Getenv("DB_PASSWORD_FILE"))
 	if err != nil {
 		return nil, err
 	}

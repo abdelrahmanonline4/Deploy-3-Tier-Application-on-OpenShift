@@ -20,8 +20,7 @@ spec:
         secret:
           secretName: db-secret
       - name: db-data
-        persistentVolumeClaim:
-          claimName: db-pvc
+        emptyDir: {}   # ← هنا بدل الـ PVC
       containers:
       - name: database
         image: mysql:8.0
@@ -38,3 +37,6 @@ spec:
         volumeMounts:
         - name: db-data
           mountPath: "/var/lib/mysql"
+        securityContext:
+          runAsUser: 0
+          fsGroup: 0

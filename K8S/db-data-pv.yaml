@@ -1,14 +1,12 @@
 apiVersion: v1
-kind: PersistentVolume
+kind: PersistentVolumeClaim
 metadata:
-  name: db-pv
+  name: db-pvc
   namespace: webapp
 spec:
-  capacity:
-    storage: 5Gi
-  storageClassName: standard
   accessModes:
-  - ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain
-  hostPath:
-    path: "/var/mysql"
+  - ReadWriteOnce
+  storageClassName: crc-csi-hostpath-provisioner
+  resources:
+    requests:
+      storage: 5Gi

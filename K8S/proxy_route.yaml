@@ -1,0 +1,15 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: webapp-route
+  namespace: webapp
+spec:
+  host: webapp.apps-crc.testing
+  to:
+    kind: Service
+    name: proxy
+  port:
+    targetPort: 443
+  tls:
+    termination: passthrough
+
